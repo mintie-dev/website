@@ -7,7 +7,7 @@ const { title, description = 'Le Mai Thi: Robotics & Machine Intelligence at NUS
 const fullTitle = title ? `${title} — Le Mai Thi` : 'Le Mai Thi';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 // Link-preview image (Telegram, WhatsApp, X, etc.): the About page highlights.
-const ogImage = new URL('/og-card.jpg', Astro.site);
+const ogImage = new URL('/og-card-2.jpg', Astro.site);
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const section = path === '/' ? '/' : '/' + path.split('/')[1];
 const links = [
@@ -33,7 +33,7 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Le Mai Thi, /leh-maɪ-tiː/: documenting my robotics projects" />
+    <meta property="og:image:alt" content="Le Mai Thi, /leh-maɪ-tiː/. Documenting my Robotics Projects." />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
     <link rel="icon" href={url('/favicon-32.png')} sizes="32x32" type="image/png" />
