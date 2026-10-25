@@ -46,8 +46,9 @@ a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; 
 a:hover { color: var(--muted); }
 
 nav { display: flex; flex-wrap: wrap; gap: 4px 20px; align-items: baseline; }
-nav .name { font-weight: 600; text-decoration: none; margin-right: auto; }
-nav a[aria-current="page"] { text-decoration: none; font-weight: 600; }
+nav a { text-decoration: none; }
+nav .name { font-weight: 600; margin-right: auto; }
+nav a[aria-current="page"] { font-weight: 600; }
 .theme-toggle {
   background: none; border: 0; padding: 0; color: inherit; cursor: pointer;
   align-self: center; line-height: 0;
