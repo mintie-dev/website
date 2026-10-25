@@ -132,3 +132,9 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 .filters button:hover { color: var(--fg); }
 .filters button[aria-pressed="true"] { color: var(--fg); text-decoration: underline; text-underline-offset: 2px; }
 figure img.eq { width: 340px; max-width: 100%; }
+
+/* about page: photo on the left, intro on the right; stacked on phones */
+.intro { display: grid; grid-template-columns: 2fr 3fr; gap: 24px; align-items: start; }
+.intro img { width: 100%; height: auto; display: block; }
+.intro p:last-child { margin-bottom: 0; }
+@media (max-width: 520px) { .intro { grid-template-columns: 1fr; } }
