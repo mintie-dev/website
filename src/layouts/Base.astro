@@ -7,7 +7,7 @@ const { title, description = 'Le Mai Thi: Robotics & Machine Intelligence at NUS
 const fullTitle = title ? `${title} — Le Mai Thi` : 'Le Mai Thi';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 // Link-preview image (Telegram, WhatsApp, X, etc.): the About page highlights.
-const ogImage = new URL('/og.jpg', Astro.site);
+const ogImage = new URL('/og-card.jpg', Astro.site);
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const section = path === '/' ? '/' : '/' + path.split('/')[1];
 const links = [
