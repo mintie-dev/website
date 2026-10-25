@@ -1,0 +1,15 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { fmtMonth, hashtags } from '../lib/util';
+
+interface Props { project: CollectionEntry<'projects'> }
+const { status, topics, date } = Astro.props.project.data;
+const badge = { ongoing: 'ongoing', planned: 'soon' }[status as string];
+---
+<div class="entry-head">
+  <span class="tags">
+    {badge && <span class={`badge badge-${status}`}>{badge}</span>}
+    {hashtags(topics)}
+  </span>
+  {status === 'done' && <span class="date">{fmtMonth(date)}</span>}
+</div>

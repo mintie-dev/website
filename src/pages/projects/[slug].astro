@@ -1,0 +1,26 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url, hasPage } from '../../lib/util';
+import EntryHead from '../../components/EntryHead.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', hasPage);
+  return projects.map((p) => ({ params: { slug: p.id }, props: { p } }));
+}
+const { p } = Astro.props;
+const { Content } = await render(p);
+const links = Object.entries(p.data.links ?? {}).filter(([, v]) => v);
+---
+<Base title={p.data.title} description={p.data.summary}>
+  <p class="muted small"><a href={url('/projects')}>← Projects</a></p>
+  <EntryHead project={p} />
+  <h1>{p.data.title}</h1>
+  <p class="muted small">
+    {[p.data.course, ...p.data.fields].filter(Boolean).join(' · ')}
+  </p>
+  {links.length > 0 && (
+    <p class="small">{links.map(([k, v], i) => <>{i > 0 && ' · '}<a href={v}>{k}</a></>)}</p>
+  )}
+  <Content />
+</Base>

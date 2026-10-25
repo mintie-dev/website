@@ -1,0 +1,70 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { url, hasPage } from '../lib/util';
+
+const now = (await getCollection('projects', (p) => p.data.status === 'ongoing'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Three vertical (9:16) final-demo clips. Set `id` to a project file name and `video` to its clip;
+// leave a slot as null to show a placeholder.
+const highlightSlots = [
+  { id: 'nush-hack-2023-duster', video: '/assets/nushhack_10nov23/final_demo.MP4' },
+  { id: 'rb2301-reactive-avoidance', video: '/assets/rb2301_ca1/demo-vertical.mp4' },
+  { id: 'rb2301-astar-pid', video: '/assets/rb2301_ca2/demo-vertical.mp4' },
+];
+const highlights = await Promise.all(
+  highlightSlots.map(async (h) => (h ? { ...h, project: (await getEntry('projects', h.id))! } : null)),
+);
+---
+<Base>
+  <p>
+    Hi! I'm Le Mai Thi, you can call me Thi, and it's pronounced /tee/. I study Robotics &amp; Machine
+    Intelligence at the National University of Singapore (class of 2029). I spend most of my time on
+    robotics: building things, researching in my lab, and figuring out what I don't understand yet.
+  </p>
+  <p>
+    This site is where I keep my <a href={url('/projects')}>projects</a> (finished, ongoing, and coming soon)
+    and my <a href={url('/notes')}>notes</a> on what I'm learning and thinking about.
+  </p>
+
+  <h2>Now</h2>
+  <ul>
+    {now.map((p) => (
+      <li>
+        {hasPage(p) ? <a href={url(`/projects/${p.id}`)}>{p.data.title}</a> : p.data.title}
+        <span class="muted"> — {p.data.summary}</span>
+      </li>
+    ))}
+  </ul>
+
+  <div class="section-head">
+    <h2>Highlights</h2>
+    <a class="small" href={url('/projects')}>see all</a>
+  </div>
+  <div class="highlights">
+    {highlights.map((h) =>
+      h ? (
+        <a href={url(`/projects/${h.project.id}`)}>
+          <div class="reel">
+            <video src={h.video} autoplay muted loop playsinline preload="metadata"></video>
+          </div>
+          <div class="caption">{h.project.data.title}</div>
+        </a>
+      ) : (
+        <div class="placeholder">
+          <div class="reel">coming soon</div>
+          <div class="caption">Project title</div>
+        </div>
+      ),
+    )}
+  </div>
+
+  <h2>Contact</h2>
+  <p>
+    <a href="mailto:lemaithi0203@gmail.com">lemaithi0203@gmail.com</a>{' · '}
+    <a href="https://www.linkedin.com/in/le-mai-thi/">LinkedIn</a>{' · '}
+    <a href="https://t.me/lmthi">Telegram</a>{' · '}
+    <a href="https://x.com/lmtuwu">X (Twitter)</a>
+  </p>
+</Base>

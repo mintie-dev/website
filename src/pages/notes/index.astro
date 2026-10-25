@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url, fmtDay } from '../../lib/util';
+
+// Drafts are listed but greyed out and not clickable, like unfinished projects.
+const notes = (await getCollection('notes'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title="Notes">
+  <h1>Notes</h1>
+  <p class="muted">Things I care about, things I'm learning, and half-formed thoughts.</p>
+  <ul class="entries">
+    {notes.map((n) => (
+      <li class:list={{ inactive: n.data.draft }}>
+        <div class="meta">{fmtDay(n.data.date)}</div>
+        {n.data.draft
+          ? <span class="title">{n.data.title}</span>
+          : <a class="title" href={url(`/notes/${n.id}`)}>{n.data.title}</a>}
+        {n.data.summary && <div>{n.data.summary}</div>}
+      </li>
+    ))}
+  </ul>
+</Base>

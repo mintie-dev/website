@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { FIELDS } from '../content.config';
+import { url, hasPage } from '../lib/util';
+import EntryHead from './EntryHead.astro';
+
+interface Props { projects: CollectionEntry<'projects'>[] }
+// Coming soon first, then ongoing, then finished projects newest first.
+const STATUS_ORDER = { planned: 0, ongoing: 1, done: 2 };
+const projects = [...Astro.props.projects].sort(
+  (a, b) =>
+    STATUS_ORDER[a.data.status] - STATUS_ORDER[b.data.status] || b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+<div class="filters" id="filters" hidden>
+  <div><span class="label">field</span>
+    <button data-value="" aria-pressed="true">all</button>
+    {FIELDS.map((f) => <button data-value={f} aria-pressed="false">{f}</button>)}
+  </div>
+</div>
+
+<ul class="entries" id="project-list">
+  {projects.map((p) => (
+    <li data-field={p.data.fields.join(' ')} class:list={{ inactive: !hasPage(p), ongoing: p.data.status === 'ongoing' }}>
+      <EntryHead project={p} />
+      {hasPage(p)
+        ? <a class="title" href={url(`/projects/${p.id}`)}>{p.data.title}</a>
+        : <span class="title">{p.data.title}</span>}
+      <div class="summary">{p.data.summary}</div>
+    </li>
+  ))}
+</ul>
+
+<script>
+  const filters = document.getElementById('filters')!;
+  const items = [...document.getElementById('project-list')!.children] as HTMLElement[];
+
+  filters.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('button');
+    if (!btn) return;
+    const field = btn.dataset.value!;
+    filters.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    for (const li of items) li.hidden = !!field && !li.dataset.field!.split(' ').includes(field);
+  });
+
+  filters.hidden = false;
+</script>
