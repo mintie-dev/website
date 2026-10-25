@@ -97,8 +97,14 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 .entries .meta { color: var(--muted); font-size: 14px; }
 .entries .title { font-weight: 500; }
 /* planned or not-yet-written projects: shown but greyed out and not clickable */
-.entries li.inactive > * { opacity: 0.4; }
-.entries li.inactive.ongoing .title { opacity: 1; } /* ongoing work keeps a full-colour title */
+.entries .card { display: block; text-decoration: none; color: inherit; }
+.entries .card:hover .title { color: var(--muted); }
+.entry-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.entry-row .date { color: var(--muted); font-size: 14px; white-space: nowrap; }
+.entries .summary .tag { color: var(--muted); white-space: nowrap; }
+/* coming-soon projects: title greyed out (the badge stays in full colour) */
+.entries li.planned .title { color: var(--muted); }
+.entries li.planned .title .badge { color: var(--muted); }
 
 /* home page highlight reels */
 .section-head { display: flex; justify-content: space-between; align-items: baseline; margin: 40px 0 8px; }
@@ -113,7 +119,6 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 }
 .highlights video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .highlights .caption { font-size: 14px; margin-top: 6px; line-height: 1.4; }
-.highlights a .caption { text-decoration: underline; text-underline-offset: 2px; }
 .highlights .placeholder .caption { color: var(--muted); }
 
 /* text-only filter toggles */

@@ -1,8 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { FIELDS } from '../content.config';
-import { url, hasPage } from '../lib/util';
-import EntryHead from './EntryHead.astro';
+import { url, hasPage, fmtMonth, TOPIC_TAGS } from '../lib/util';
 
 interface Props { projects: CollectionEntry<'projects'>[] }
 // Coming soon first, then ongoing, then finished projects newest first.
@@ -20,15 +19,28 @@ const projects = [...Astro.props.projects].sort(
 </div>
 
 <ul class="entries" id="project-list">
-  {projects.map((p) => (
-    <li data-field={p.data.fields.join(' ')} class:list={{ inactive: !hasPage(p), ongoing: p.data.status === 'ongoing' }}>
-      <EntryHead project={p} />
-      {hasPage(p)
-        ? <a class="title" href={url(`/projects/${p.id}`)}>{p.data.title}</a>
-        : <span class="title">{p.data.title}</span>}
-      <div class="summary">{p.data.summary}</div>
-    </li>
-  ))}
+  {projects.map((p) => {
+    const badge = { ongoing: 'ongoing', planned: 'soon' }[p.data.status as string];
+    const head = (
+      <div class="entry-row">
+        <span class="title">{badge && <span class={`badge badge-${p.data.status}`}>{badge}</span>}{p.data.title}</span>
+        {p.data.status === 'done' && <span class="date">{fmtMonth(p.data.date)}</span>}
+      </div>
+    );
+    return (
+      <li data-field={p.data.fields.join(' ')} class:list={{ inactive: !hasPage(p), [p.data.status]: true }}>
+        {hasPage(p) ? (
+          <a class="card" href={url(`/projects/${p.id}`)}>
+            {head}
+            <div class="summary">
+              {p.data.summary}
+              {p.data.topics.map((t) => <> <span class="tag">{TOPIC_TAGS[t]}</span></>)}
+            </div>
+          </a>
+        ) : head}
+      </li>
+    );
+  })}
 </ul>
 
 <script>
