@@ -134,7 +134,12 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 figure img.eq { width: 340px; max-width: 100%; }
 
 /* about page: photo on the left, intro on the right; stacked on phones */
-.intro { display: grid; grid-template-columns: 2fr 3fr; gap: 24px; align-items: start; }
-.intro img { width: 100%; height: auto; display: block; }
+/* the script in index.astro sets the photo's height to match the text block */
+.intro { display: flex; gap: 24px; align-items: flex-start; }
+.intro img { flex: none; width: 30%; height: auto; display: block; }
+.intro .intro-text { flex: 1; min-width: 0; }
 .intro p:last-child { margin-bottom: 0; }
-@media (max-width: 520px) { .intro { grid-template-columns: 1fr; } }
+@media (max-width: 520px) {
+  .intro { flex-direction: column; }
+  .intro img { width: 60%; max-width: 240px; }
+}

@@ -19,8 +19,8 @@ const highlights = await Promise.all(
 ---
 <Base>
   <div class="intro">
-  <img src={url('/assets/about/me.webp')} alt="Thi hugging a giant Hello Kitty statue" />
-  <div>
+  <img id="intro-photo" src={url('/assets/about/me.webp')} alt="Thi hugging a giant Hello Kitty statue" />
+  <div class="intro-text" id="intro-text">
   <p>
     Hi! You can call me Thi, pronounced /tee/. I study Robotics &amp; Machine
     Intelligence at the National University of Singapore (class of 2029). I spend most of my time on
@@ -32,6 +32,21 @@ const highlights = await Promise.all(
   </p>
   </div>
   </div>
+  <script is:inline>
+    // Match the photo's height to the intro text beside it (side-by-side layout only).
+    (() => {
+      const img = document.getElementById('intro-photo');
+      const text = document.getElementById('intro-text');
+      const stacked = matchMedia('(max-width: 520px)');
+      const fit = () => {
+        if (stacked.matches) { img.style.height = img.style.width = ''; return; }
+        img.style.height = text.offsetHeight + 'px';
+        img.style.width = 'auto';
+      };
+      new ResizeObserver(fit).observe(text);
+      stacked.addEventListener('change', fit);
+    })();
+  </script>
 
   <h2>Now</h2>
   <ul>
