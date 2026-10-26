@@ -1,5 +1,5 @@
 ---
-title: "Training Microduck"
+title: "Training a Policy on Microduck — RL"
 date: 2026-12-01
 summary: "TODO: one line."
 fields: [software, hardware]
