@@ -144,3 +144,4 @@ figure img.eq { width: 340px; max-width: 100%; }
   .intro { flex-direction: column; }
   .intro img { width: 60%; max-width: 240px; }
 }
+figure .pair + .pair { margin-top: 12px; }
