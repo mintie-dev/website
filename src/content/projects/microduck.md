@@ -1,7 +1,7 @@
 ---
-title: "Training a policy with LeRobot"
+title: "Training Microduck"
 date: 2026-12-01
-summary: "Train and deploy a learned manipulation policy with Hugging Face LeRobot."
+summary: "TODO: one line."
 fields: [software, hardware]
 topics: [ai-ml]
 status: planned
