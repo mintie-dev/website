@@ -1,5 +1,5 @@
 ---
-title: "UROP: UMI and iPhUMI"
+title: "UROP: UMI and iPhUMI — Data Collection"
 date: 2026-08-01   # TODO: confirm start date
 summary: "Undergraduate research on UMI-style handheld data collection for robot learning."
 fields: [hardware, software]

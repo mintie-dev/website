@@ -1,5 +1,5 @@
 ---
-title: "Dynamic obstacle avoidance and SLAM"
+title: "Dynamic Obstacle Avoidance and SLAM — ROS"
 date: 2026-10-15   # TODO: confirm date
 summary: "Mapping an unknown space while avoiding moving obstacles."
 fields: [software]
