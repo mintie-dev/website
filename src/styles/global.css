@@ -102,7 +102,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 .entries .card:hover .title { color: var(--muted); }
 .entry-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
 .entry-row .date { color: var(--muted); font-size: 14px; white-space: nowrap; }
-.entries .summary .tag { color: var(--muted); white-space: nowrap; }
+.entries .summary { color: var(--muted); }
+.entries .summary .tag { white-space: nowrap; }
 /* coming-soon projects: title greyed out (the badge stays in full colour) */
 .entries li.planned .title { color: var(--muted); }
 .entries li.planned .title .badge { color: var(--muted); }
