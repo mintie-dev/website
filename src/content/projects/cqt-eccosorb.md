@@ -1,6 +1,6 @@
 ---
 title: "ECCOSORB Infrared Filter for Quantum Circuits"
-date: 2024-12-01
+date: 2023-12-01
 summary: "Designing and hand-building a filter that blocks high-frequency noise before it reaches a quantum computer's qubits, while letting the 4–8 GHz control signals through."
 fields: [hardware]
 status: done
