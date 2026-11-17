@@ -1,5 +1,5 @@
 ---
-title: "A* Path Planning & PID control — ROS"
+title: "A* Path Planning & PID control (ROS 2)"
 date: 2026-10-01
 summary: "A robot that plans its way through a maze with A*, prefers routes with fewer turns, and drives corner to corner to reach four goals in a row."
 fields: [software]

@@ -1,5 +1,5 @@
 ---
-title: "Visual Grip Force Estimation — Fin Ray (FRE) Grippers on iPhUMI"
+title: "Visual Grip Force Estimation: Fin Ray (FRE) Grippers on iPhUMI"
 date: 2026-11-16
 summary: "Soft Fin Ray fingers with printed markers turn a phone-based demonstration gripper into a force sensor: the camera watches the fingers bend, and a beam model reads off how hard they squeeze."
 fields: [hardware, software]

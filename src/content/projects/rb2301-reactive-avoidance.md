@@ -1,5 +1,5 @@
 ---
-title: "LiDAR Obstacle Reactive Avoidance — ROS"
+title: "LiDAR Obstacle Reactive Avoidance (ROS 2)"
 date: 2026-09-15
 summary: "An omnidirectional robot that weaves through randomly placed obstacles to the finish line using LiDAR, and remembers which way it's dodging."
 fields: [software]
