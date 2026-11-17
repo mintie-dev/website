@@ -9,12 +9,12 @@ course: UROP
 paper: /documents/urop-final-report.pdf
 ---
 
+<p><strong><a href="/documents/urop-final-report.pdf" target="_blank" rel="noopener">Read the full UROP report ↗</a></strong></p>
+
 <figure>
   <video src="/assets/urop_force/four-objects.mp4" controls playsinline preload="metadata"></video>
   <figcaption>Estimated grip force while grasping four objects.</figcaption>
 </figure>
-
-<p><strong><a href="/documents/urop-final-report.pdf" target="_blank" rel="noopener">Read the full UROP report ↗</a></strong></p>
 
 ## The problem
 
