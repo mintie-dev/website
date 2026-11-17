@@ -25,6 +25,7 @@ const projects = defineCollection({
     status: z.enum(STATUSES),
     draft: z.boolean().default(false), // greyed out with no page until written up
     course: z.string().optional(),
+    paper: z.string().optional(), // link to a research paper/report; marks the project with a document icon
     links: z
       .object({ github: z.string().optional(), video: z.string().optional(), other: z.string().optional() })
       .optional(),
