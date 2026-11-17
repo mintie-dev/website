@@ -23,7 +23,7 @@ const projects = [...Astro.props.projects].sort(
     const badge = { ongoing: 'ongoing', planned: 'soon' }[p.data.status as string];
     const head = (
       <div class="entry-row">
-        <span class="title">{badge && <span class={`badge badge-${p.data.status}`}>{badge}</span>}{p.data.paper && <svg class="paper-icon" viewBox="0 0 18 17" width="16" height="15" role="img" aria-label="Research paper"><title>Research paper</title><g stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="8" y="1.5" width="8" height="11" rx="1.8" transform="rotate(12 12 7)" fill="none"/><rect x="2" y="4.5" width="8" height="11" rx="1.8" transform="rotate(-10 6 10)" style="fill: var(--bg)"/></g></svg>}{p.data.title}</span>
+        <span class="title">{badge && <span class={`badge badge-${p.data.status}`}>{badge}</span>}{p.data.paper && <svg class="paper-icon" viewBox="0 0 18 17" width="16" height="15" role="img" aria-label="Research paper"><title>Research paper</title><g stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="1.5" width="8" height="11" rx="1.8" transform="rotate(12 12 7)" fill="none"/><rect x="2" y="4.5" width="8" height="11" rx="1.8" transform="rotate(-10 6 10)" style="fill: var(--bg)"/></g></svg>}{p.data.title}</span>
         {p.data.status === 'done' && <span class="date">{fmtMonth(p.data.date)}</span>}
       </div>
     );
