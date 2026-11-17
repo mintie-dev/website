@@ -114,6 +114,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 .section-head h2 { margin: 0; }
 .section-head a { color: var(--muted); }
 .section-head a:hover { color: var(--fg); }
+.contacts, .contacts a { color: var(--muted); font-style: italic; }
+.contacts a:hover { color: var(--fg); }
 .highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
 .highlights a, .highlights .placeholder { display: block; text-decoration: none; }
 .highlights .reel {
