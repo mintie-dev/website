@@ -135,6 +135,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 .filters button:hover { color: var(--fg); }
 .filters button[aria-pressed="true"] { color: var(--fg); text-decoration: underline; text-underline-offset: 2px; }
 figure img.eq { width: 340px; max-width: 100%; }
+figure img.narrow { width: 60%; }
 
 /* about page: photo on the left, intro on the right; stacked on phones */
 /* the script in index.astro sets the photo's height to match the text block */

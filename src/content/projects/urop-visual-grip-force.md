@@ -62,7 +62,7 @@ The markers had to be white on black TPU, and the only white filament was PLA. I
 What worked was giving up on printing them together. The finger is printed in TPU alone with a small recess at each joint, and the markers are printed separately as tiny PLA pins and glued in by hand.
 
 <figure>
-  <img src="/assets/urop_force/markers.png" alt="Close-up of the finger: white PLA marker pins printed separately, recesses in the TPU joint pads, pins glued in place, and the M3 mounting hole" loading="lazy" />
+  <img class="narrow" src="/assets/urop_force/markers.png" alt="Close-up of the finger: white PLA marker pins printed separately, recesses in the TPU joint pads, pins glued in place, and the M3 mounting hole" loading="lazy" />
   <figcaption>Separate PLA pins glued into recesses, after about ten failed dual-material prints.</figcaption>
 </figure>
 
