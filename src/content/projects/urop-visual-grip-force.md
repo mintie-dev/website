@@ -9,12 +9,12 @@ course: UROP
 paper: /documents/urop-final-report.pdf
 ---
 
-<p><strong><a href="/documents/urop-final-report.pdf" target="_blank" rel="noopener">Read the full UROP report ↗</a></strong></p>
-
 <figure>
-  <img src="/assets/urop_force/grasps.jpg" alt="Four ultrawide frames from the gripper's phone, each showing two black Fin Ray fingers with white markers gripping an object: an acrylic box at 12.1 N, a perfume bottle at 11.0 N, a narrow yellow cuboid at 6.2 N and an orange plush fox at 4.9 N" loading="lazy" />
-  <figcaption>What the phone sees during four grasps, with the tracked markers and the estimated grip force at that moment.</figcaption>
+  <video src="/assets/urop_force/four-objects.mp4" controls playsinline preload="metadata"></video>
+  <figcaption>Estimated grip force while grasping four objects.</figcaption>
 </figure>
+
+<p><strong><a href="/documents/urop-final-report.pdf" target="_blank" rel="noopener">Read the full UROP report ↗</a></strong></p>
 
 ## The problem
 
@@ -77,6 +77,11 @@ What worked was giving up on printing them together. The finger is printed in TP
 ## Results
 
 All the recording happened on 12 November: 20 squeezes of a load cell and 40 handheld grasps.
+
+<figure>
+  <img src="/assets/urop_force/grasps.jpg" alt="Four ultrawide frames from the gripper's phone, each showing two black Fin Ray fingers with white markers gripping an object: an acrylic box at 12.1 N, a perfume bottle at 11.0 N, a narrow yellow cuboid at 6.2 N and an orange plush fox at 4.9 N" loading="lazy" />
+  <figcaption>What the phone sees during four grasps, with the tracked markers and the estimated grip force at that moment.</figcaption>
+</figure>
 
 - **Tracking:** 0.034 mm median marker noise in a clean scene, way below the millimetres the finger bends. The background mattered a lot, though. In front of a keyboard the white keys looked like markers and only 42% of frames had every marker; over a black cloth it was 97–99%.
 - **Contact height:** stepping the load cell from root to tip, the estimate read 25, 37, 49, 63 and 85 mm, in perfect order.
