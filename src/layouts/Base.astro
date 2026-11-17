@@ -82,6 +82,12 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
     <main>
       <slot />
     </main>
+    <dialog class="lightbox" id="lightbox" aria-label="Enlarged image">
+      <button class="lightbox-close" type="button" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+      <img alt="" />
+    </dialog>
     <footer>
       <span>Updated {built}</span>
       <button class="to-top" id="to-top" type="button">back to top</button>
@@ -102,6 +108,22 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
         addEventListener('scroll', onScroll, { passive: true });
         onScroll();
         toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Click-to-enlarge images open in a lightbox instead of leaving the page.
+        // Close with the button, a click anywhere, or Esc.
+        const box = document.getElementById('lightbox');
+        const big = box.querySelector('img');
+        document.addEventListener('click', (e) => {
+          const a = e.target.closest('a[href]');
+          if (!a || !a.querySelector('img') || !/\.(png|jpe?g|webp|gif|svg)$/i.test(a.pathname)) return;
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+          e.preventDefault();
+          big.src = a.href;
+          big.alt = a.querySelector('img').alt;
+          box.showModal();
+        });
+        box.addEventListener('click', () => box.close());
+        box.addEventListener('close', () => big.removeAttribute('src'));
       })();
     </script>
   </body>
