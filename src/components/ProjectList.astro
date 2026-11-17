@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { FIELDS } from '../content.config';
-import { url, hasPage, fmtMonth, TOPIC_TAGS } from '../lib/util';
+import { url, hasPage, fmtMonth } from '../lib/util';
 
 interface Props { projects: CollectionEntry<'projects'>[] }
 // Coming soon first, then ongoing, then finished projects newest first.
@@ -12,7 +12,7 @@ const projects = [...Astro.props.projects].sort(
 );
 ---
 <div class="filters" id="filters" hidden>
-  <div><span class="label">field</span>
+  <div>
     <button data-value="" aria-pressed="true">all</button>
     {FIELDS.map((f) => <button data-value={f} aria-pressed="false">{f}</button>)}
   </div>
@@ -34,7 +34,6 @@ const projects = [...Astro.props.projects].sort(
             {head}
             <div class="summary">
               {p.data.summary}
-              {p.data.topics.map((t) => <> <span class="tag">{TOPIC_TAGS[t]}</span></>)}
             </div>
           </a>
         ) : head}

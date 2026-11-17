@@ -1,5 +1,5 @@
 ---
-title: "Anti-Tailgating Condo Gate (Arduino UNO)"
+title: "Anti-Tailgating Condo Gate"
 date: 2024-11-09
 summary: "A cardboard condo gate that notices when a second person slips through behind someone and raises the alarm. 3rd place at NUSH Hack 2024."
 fields: [electronics, hardware]

@@ -17,7 +17,7 @@ const links = Object.entries(p.data.links ?? {}).filter(([, v]) => v);
   <EntryHead project={p} />
   <h1>{p.data.title}</h1>
   <p class="muted small">
-    {[p.data.course, ...p.data.fields].filter(Boolean).join(' · ')}
+    {[p.data.course, ...p.data.fields, ...p.data.stack].filter(Boolean).join(' · ')}
   </p>
   {links.length > 0 && (
     <p class="small">{links.map(([k, v], i) => <>{i > 0 && ' · '}<a href={v}>{k}</a></>)}</p>

@@ -21,10 +21,11 @@ const projects = defineCollection({
     date: z.coerce.date(),
     summary: z.string(),
     fields: z.array(z.enum(FIELDS)).min(1),
-    topics: z.array(z.enum(TOPICS)).default([]), // shown as hashtags, not filters
+    topics: z.array(z.enum(TOPICS)).default([]), // shown as hashtags on the article, not filters
     status: z.enum(STATUSES),
     draft: z.boolean().default(false), // greyed out with no page until written up
     course: z.string().optional(),
+    stack: z.array(z.string()).default([]), // e.g. ROS 2; shown after the fields under the title
     paper: z.string().optional(), // link to a research paper/report; marks the project with a document icon
     links: z
       .object({ github: z.string().optional(), video: z.string().optional(), other: z.string().optional() })

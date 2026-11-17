@@ -1,5 +1,5 @@
 ---
-title: "Self-Cleaning Hamster Cage (Arduino UNO)"
+title: "Self-Cleaning Hamster Cage"
 date: 2022-11-12
 summary: "A hamster cage whose floor rolls away like a garage door, so the old bedding drops through a grid while the hamster stays safe on top. Plus a cardboard feeder arm that extends and retracts."
 fields: [electronics, hardware]

@@ -1,5 +1,5 @@
 ---
-title: "Robot Arm Kinematics (Niryo Ned)"
+title: "Robot Arm Kinematics"
 date: 2026-09-01
 summary: "Modelling a 6-axis robot arm with DH parameters, checking the maths against the real arm, then making it draw lines and circles to see how well it actually moves."
 fields: [software]

@@ -105,7 +105,6 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 .entry-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
 .entry-row .date { color: var(--muted); font-size: 14px; white-space: nowrap; }
 .entries .summary { color: var(--muted); }
-.entries .summary .tag { white-space: nowrap; }
 /* coming-soon projects: title greyed out (the badge stays in full colour) */
 .entries li.planned .title { color: var(--muted); }
 .entries li.planned .title .badge { color: var(--muted); }
@@ -128,7 +127,6 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 /* text-only filter toggles */
 .filters { font-size: 14px; margin-bottom: 20px; }
 .filters div { margin-bottom: 4px; }
-.filters .label { color: var(--muted); display: inline-block; min-width: 64px; }
 .filters button {
   font: inherit; color: var(--muted); background: none; border: 0; padding: 0 2px; margin-right: 8px; cursor: pointer;
 }

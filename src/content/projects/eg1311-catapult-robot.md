@@ -1,5 +1,5 @@
 ---
-title: "Obstacle Course Catapult Robot (Arduino UNO)"
+title: "Obstacle Course Catapult Robot"
 date: 2026-04-01
 summary: "A three-wheeled robot that climbs over a bump and a ramp, stops just short of a wall, catapults a ping pong ball, and drives back."
 fields: [hardware, electronics, software]

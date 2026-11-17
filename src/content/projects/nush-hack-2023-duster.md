@@ -1,5 +1,5 @@
 ---
-title: "Autonomous Duster (Arduino UNO)"
+title: "Autonomous Duster"
 date: 2023-11-10
 summary: "An autonomous duster that avoids obstacles, finds the shelf height, raises the duster to match, and sweeps the shelf."
 fields: [electronics, hardware]

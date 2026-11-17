@@ -1,11 +1,12 @@
 ---
-title: "Live Mapping and Dynamic Obstacle Avoidance (ROS 2)"
+title: "Live Mapping and Dynamic Obstacle Avoidance"
 date: 2026-11-15
 summary: "A mecanum robot that maps an unknown course as it drives, plans through it with A*, backs out of dead ends, and waits for a safe gap to slip past swinging panels."
 fields: [software]
 topics: [navigation, motion-planning]
 status: done
-course: RB2301 final project
+course: RB2301
+stack: [ROS 2]
 ---
 
 <figure>

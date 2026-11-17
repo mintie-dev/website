@@ -1,11 +1,12 @@
 ---
-title: "LiDAR Obstacle Reactive Avoidance (ROS 2)"
+title: "LiDAR Obstacle Reactive Avoidance"
 date: 2026-09-15
 summary: "An omnidirectional robot that weaves through randomly placed obstacles to the finish line using LiDAR, and remembers which way it's dodging."
 fields: [software]
 topics: [navigation, motion-planning]
 status: done
-course: RB2301 CA1
+course: RB2301
+stack: [ROS 2]
 ---
 
 <figure>
