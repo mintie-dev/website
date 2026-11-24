@@ -5,7 +5,10 @@ summary: "Designing and hand-building a filter that blocks high-frequency noise 
 fields: [hardware]
 status: done
 course: Centre for Quantum Technologies, NUS
+paper: /documents/cqt-eccosorb-report.pdf
 ---
+
+<p><strong><a href="/documents/cqt-eccosorb-report.pdf" target="_blank" rel="noopener">Read the full report ↗</a></strong></p>
 
 <figure>
   <img src="/assets/cqt_eccosorb/final.jpg" alt="The finished ECCOSORB filter: a small copper block with gold SMA connectors on each end, black epoxy filling the hole on top, and six screw holes" loading="lazy" />
