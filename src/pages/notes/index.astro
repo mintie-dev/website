@@ -11,14 +11,23 @@ const notes = (await getCollection('notes'))
   <h1>Notes</h1>
   <p class="muted">Things I care about, things I'm learning, and half-formed thoughts.</p>
   <ul class="entries">
-    {notes.map((n) => (
-      <li class:list={{ inactive: n.data.draft }}>
-        <div class="meta">{fmtDay(n.data.date)}</div>
-        {n.data.draft
-          ? <span class="title">{n.data.title}</span>
-          : <a class="title" href={url(`/notes/${n.id}`)}>{n.data.title}</a>}
-        {n.data.summary && <div>{n.data.summary}</div>}
-      </li>
-    ))}
+    {notes.map((n) => {
+      const head = (
+        <div class="entry-row">
+          <span class="title">{n.data.title}</span>
+          <span class="date">{fmtDay(n.data.date)}</span>
+        </div>
+      );
+      return (
+        <li class:list={{ inactive: n.data.draft }}>
+          {n.data.draft ? head : (
+            <a class="card" href={url(`/notes/${n.id}`)}>
+              {head}
+              {n.data.summary && <div class="summary">{n.data.summary}</div>}
+            </a>
+          )}
+        </li>
+      );
+    })}
   </ul>
 </Base>
