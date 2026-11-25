@@ -1,0 +1,14 @@
+name = "lemaithi-mailbox"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+# served at https://mailbox.lemaithi.com (the domain's DNS is on Cloudflare)
+routes = [{ pattern = "mailbox.lemaithi.com", custom_domain = true }]
+
+[vars]
+ALLOWED_ORIGINS = "https://lemaithi.com,https://www.lemaithi.com,http://localhost:4321"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lemaithi-mailbox"
+database_id = "42734765-b4c6-40cd-be9a-8b0f642f2243"

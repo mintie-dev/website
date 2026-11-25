@@ -1,0 +1,64 @@
+---
+// The homepage envelope ("A · Classic"): cream paper, straight flap, pink wax seal with a leaf.
+// Starts closed; add `is-open` (and drop `is-closed`) when the mailbox has letters.
+// Hover: closed → the flap opens and the paper peeks; open → the paper pops out and it shakes.
+
+// a slightly lumpy wax rim
+const rim = (() => {
+  let d = '';
+  for (let i = 0; i <= 36; i++) {
+    const a = (i / 36) * Math.PI * 2;
+    const r = 12.5 + Math.sin(a * 5 + 1) * 0.55 + Math.sin(a * 3) * 0.35;
+    d += `${i ? 'L' : 'M'}${(Math.cos(a) * r).toFixed(2)} ${(Math.sin(a) * r).toFixed(2)} `;
+  }
+  return d + 'Z';
+})();
+const flap = 'M0 0.5 L60 46 L120 0.5 Z';
+---
+<span class="env is-closed">
+  <svg viewBox="-6 -52 132 140" aria-hidden="true">
+    <defs>
+      <filter id="env-grain" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n" />
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.42  0 0 0 0 0.33  0 0 0 0 0.22  0.32 0 0 0 -0.1" result="g" />
+        <feComposite in="g" in2="SourceGraphic" operator="in" result="g2" />
+        <feMerge><feMergeNode in="SourceGraphic" /><feMergeNode in="g2" /></feMerge>
+      </filter>
+      <filter id="env-lift" x="-10%" y="-10%" width="120%" height="140%">
+        <feDropShadow dx="0" dy="1.4" stdDeviation="1.3" flood-color="#6b5436" flood-opacity="0.28" />
+      </filter>
+      <radialGradient id="env-shine" cx="35%" cy="30%" r="75%">
+        <stop offset="0" stop-color="#fff" stop-opacity="0.45" />
+        <stop offset="0.45" stop-color="#fff" stop-opacity="0" />
+        <stop offset="1" stop-color="#5a1f28" stop-opacity="0.25" />
+      </radialGradient>
+    </defs>
+    <g class="wiggle">
+      <g class="flap-open">
+        <path d={flap} transform="scale(1 -1)" fill="#ebe3d3" stroke="#ddd2bf" stroke-width="0.8" stroke-linejoin="round" filter="url(#env-grain)" />
+      </g>
+      <rect x="0" y="0" width="120" height="80" rx="3" fill="#ebe3d3" filter="url(#env-grain)" />
+      <g class="sheet">
+        <rect x="9" y="5" width="102" height="70" rx="1.5" fill="#fffdf8" stroke="#ece6da" stroke-width="0.6" filter="url(#env-grain)" />
+      </g>
+      <path d="M0 0 L60 40 L120 0 V77 Q120 80 117 80 H3 Q0 80 0 77 Z" fill="#f4eee2" filter="url(#env-grain)" />
+      <path d="M1.5 78.5 L53 40.5 M118.5 78.5 L67 40.5" stroke="#ddd2bf" stroke-width="0.9" fill="none" stroke-linecap="round" />
+      <g class="flap-shut">
+        <g filter="url(#env-lift)">
+          <path d={flap} fill="#f4eee2" stroke="#ddd2bf" stroke-width="0.6" stroke-linejoin="round" filter="url(#env-grain)" />
+        </g>
+      </g>
+      <g transform="translate(60 44)">
+        <path d={rim} fill="#b04f5d" />
+        <circle r="10" fill="#cf6673" />
+        <!-- just the shape of a bow, one flat lighter colour -->
+        <g transform="rotate(-12)" fill="#eba7b0">
+          <path d="M-1.6 -0.2 C-3 -5.2 -8 -5 -7.4 -0.6 C-7 3.4 -3.2 3.6 -1.6 0.6 Z" />
+          <path d="M1.6 -0.2 C3 -5.2 8 -5 7.4 -0.6 C7 3.4 3.2 3.6 1.6 0.6 Z" />
+          <circle r="2.3" />
+        </g>
+        <path d={rim} fill="url(#env-shine)" />
+      </g>
+    </g>
+  </svg>
+</span>

@@ -17,3 +17,13 @@ Projects with `status: ongoing` show up under "Now" on the home page.
 **Images:** put them in `public/images/` and use `![alt](/images/foo.jpg)`.
 
 Pushing to `main` deploys via `.github/workflows/deploy.yml`.
+
+**Mailbox** (`/writealetter`, `/openmymailbox`): letters are stored by a small Cloudflare Worker in
+`mailbox/` (D1 database, holds 10 letters waiting at a time). It deploys separately from the site:
+
+```bash
+cd mailbox
+npm run dev                          # local API on :8787 (local password lives in mailbox/.dev.vars)
+npm run deploy                       # publish the Worker
+npx wrangler secret put PASSWORD     # change the mailbox password (signs out every device)
+```

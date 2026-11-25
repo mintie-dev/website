@@ -1,0 +1,71 @@
+/* Shared by /writealetter and /openmymailbox: the paper, dialogs, mailbox and envelope. */
+
+:root { --paper: #fff; --ink: #111; --paper-line: #ecebe7; --paper-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 6px 24px rgba(0, 0, 0, 0.06); }
+:root[data-theme="dark"] { --paper-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.35); }
+
+body.bare { min-height: 100vh; }
+body.bare [hidden] { display: none !important; }
+
+/* A4 sheet: 210 × 297. JS sets --page-h and grows the sheet a whole page at a time. */
+.sheet { --w: min(608px, calc(100vw - 32px)); /* as wide as the site's text column */ width: var(--w); margin: 0 auto; }
+.paper {
+  --page-h: calc(var(--w) * 297 / 210);
+  background: var(--paper); color: var(--ink); box-shadow: var(--paper-shadow);
+  min-height: var(--page-h);
+  padding: clamp(28px, calc(var(--w) * 0.11), 88px);
+  /* faint dashed line where each page ends */
+  background-image: repeating-linear-gradient(to bottom, transparent 0 calc(var(--page-h) - 1px), var(--paper-line) calc(var(--page-h) - 1px) var(--page-h));
+}
+/* letters use the site's own font */
+.letter-body {
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #2f2a25; outline: none; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+/* like Notes: the first line is the title, unless it runs on past one line */
+.letter-body.has-title::first-line { font-size: 1.35em; font-weight: 600; line-height: 1.4; }
+.letter-body ul, .letter-body ol { margin: 0; padding-left: 1.4em; }
+.letter-body p { margin: 0; }
+
+/* buttons and dialogs, in the site's plain style */
+.btn {
+  font: inherit; font-size: 15px; padding: 7px 16px; border-radius: 999px; cursor: pointer;
+  background: none; color: var(--fg); border: 1px solid var(--rule);
+}
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn.primary:hover { opacity: 0.85; }
+.link-btn { font: inherit; background: none; border: 0; padding: 0; color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
+.link-btn:hover { color: var(--fg); }
+
+dialog.note {
+  border: 1px solid var(--rule); background: var(--bg); color: var(--fg);
+  padding: 28px 28px 20px; width: min(440px, calc(100vw - 32px)); text-align: center; border-radius: 6px;
+}
+dialog.note::backdrop { background: rgba(0, 0, 0, 0.25); }
+dialog.note p { margin: 0 0 12px; text-wrap: balance; } /* no lone word on the last line */
+dialog.note .actions { display: flex; gap: 10px; justify-content: center; margin: 20px 0 14px; flex-wrap: wrap; }
+dialog.note .foot { color: var(--muted); font-size: 13px; margin: 0; }
+dialog.note[open] { animation: pop-in 0.18s ease-out; }
+@keyframes pop-in { from { opacity: 0; transform: translateY(6px) scale(0.98); } }
+.shake { animation: shake 0.4s ease; }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+/* --- old letter paper (letter page and mailbox): warm, grainy, torn edges ---
+   JS (lib/paper.ts) sets --deckle and grows it a whole A4 page at a time. */
+.paper-shadow { filter: drop-shadow(0 1px 1.5px rgba(70, 50, 30, 0.12)) drop-shadow(0 10px 24px rgba(70, 50, 30, 0.08)); }
+.paper.old {
+  position: relative; min-height: 0; box-shadow: none;
+  height: calc(var(--w) * 297 / 210);
+  background-color: #fdfaf3;
+  /* a faint torn line where one page ends and the next begins */
+  background-image:
+    repeating-linear-gradient(to bottom, transparent 0 calc(var(--page-h, 100%) - 1px), rgba(120, 100, 70, 0.14) calc(var(--page-h, 100%) - 1px) var(--page-h, 100%)),
+    radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(190, 160, 110, 0.07));
+  -webkit-mask: var(--deckle) 0 0 / 100% 100% no-repeat;
+  mask: var(--deckle) 0 0 / 100% 100% no-repeat;
+}
+.paper.old::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.6;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.38 0 0 0 0 0.28 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.paper.old .letter-body { position: relative; caret-color: #5a4a3a; }

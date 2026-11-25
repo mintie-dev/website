@@ -1,6 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import Envelope from '../components/Envelope.astro';
 import { url } from '../lib/util';
 
 // Three vertical (9:16) final-demo clips. Set `id` to a project file name and `video` to its clip;
@@ -27,12 +28,12 @@ const highlights = await Promise.all(
   <img id="intro-photo" src={url('/assets/about/me.webp')} alt="Thi hugging a giant Hello Kitty statue" />
   <div class="intro-text" id="intro-text">
   <p>
-    Hey, you found my project website. Hello! You can call me Thi, pronounced /tee/. I study Robotics &amp; Machine
-    Intelligence at the National University of Singapore (class of 2029). I spend most of my time on
-    robotics: building things, researching in my lab, and figuring out what I don't understand yet.
+    Hello, world! I'm Le Mai Thi, but you can call me Thi, pronounced /tee/. I study Robotics &amp; Machine
+    Intelligence (RMI) at the National University of Singapore (NUS). I spend most of my time on
+    robotics: building things, researching, and figuring out what I don't understand yet.
   </p>
   <p>
-    This site is where I keep my <a href={url('/projects')}>projects</a> and my <a href={url('/notes')}>notes</a> on what I'm learning and thinking about.
+    If you have something to tell me but would rather not use the links above, drop me a message <a class="letter-link" id="letter-link" href={url('/writealetter')} title="Write me a letter">here<span class="letter-drop" id="letter-drop" aria-hidden="true"><svg class="loop-arrow" width="100" height="67" viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2 C0 20 2 40 16 46 C30 52 48 46 48 36 C48 26 34 26 30 36 C26 48 40 62 62 63 C78 64 92 61 104 57" stroke-dasharray="4.5 4" /><path d="M96.2 55.4 L104 57 L98.7 63" /></svg><Envelope /></span></a>.
   </p>
   </div>
   </div>
@@ -47,9 +48,26 @@ const highlights = await Promise.all(
         img.style.height = text.offsetHeight + 'px';
         img.style.width = 'auto';
       };
-      new ResizeObserver(fit).observe(text);
+      // the arrow + envelope hang below "here."; nudge them left if they'd run past the column
+      const drop = document.getElementById('letter-drop');
+      const keepInside = () => {
+        drop.style.translate = '';
+        const over = drop.getBoundingClientRect().right - text.getBoundingClientRect().right;
+        if (over > 0) drop.style.translate = `${-over}px 0`;
+      };
+      new ResizeObserver(() => { fit(); keepInside(); }).observe(text);
       stacked.addEventListener('change', fit);
     })();
+  </script>
+
+  <script>
+    // Open envelope with a letter peeking out while there are letters in the mailbox.
+    import { getStatus } from '../lib/mailbox';
+    getStatus().then((s) => {
+      if (!s || s.count === 0) return;
+      const env = document.querySelector('#letter-link .env');
+      env?.classList.replace('is-closed', 'is-open');
+    });
   </script>
 
   <div class="section-head">

@@ -1,0 +1,283 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/letter.css';
+---
+<Base title="Mailbox" noindex>
+  <!-- locked: just a text box -->
+  <div class="lock" id="lock" hidden>
+    <form id="login" autocomplete="on">
+      <input id="pw" type="password" placeholder="type the password" autocomplete="current-password" aria-label="Password" />
+    </form>
+    <p class="lock-msg" id="lock-msg"></p>
+  </div>
+
+  <div id="app" hidden>
+    <div class="head-row">
+      <h1>Mailbox</h1>
+      <button class="link-btn small" type="button" id="lock-btn" title="Sign this device out">lock</button>
+    </div>
+    <p class="muted" id="status"></p>
+    <ul class="entries" id="list"></ul>
+    <p class="muted" id="empty" hidden>No letters yet.</p>
+  </div>
+
+  <!-- a letter, opened -->
+  <div class="reader" id="reader" hidden>
+    <div class="reader-bar">
+      <span class="reader-date" id="reader-date"></span>
+      <span class="reader-actions">
+        <button class="link-btn" type="button" id="delete">delete</button>
+        <button class="close" type="button" id="close" aria-label="Close letter" title="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </span>
+    </div>
+    <div class="sheet" id="reader-sheet"><div class="paper-shadow"><div class="paper old" id="reader-paper"><div class="letter-body" id="reader-body"></div></div></div></div>
+  </div>
+
+  <dialog class="note" id="confirm-delete">
+    <p>Delete this letter for good?</p>
+    <p class="foot">This can't be undone.</p>
+    <div class="actions">
+      <button class="btn" type="button" data-act="cancel" autofocus>Cancel</button>
+      <button class="btn primary" type="button" data-act="delete">Delete</button>
+    </div>
+  </dialog>
+</Base>
+
+<style is:global>
+  /* global: the rows are built by the script, so scoped styles wouldn't reach them */
+  .lock[hidden] { display: none; }
+  /* let the embossed background show behind the menu bar until you scroll */
+  header:not(.scrolled) { background: transparent; }
+  .lock { min-height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .lock input {
+    font: inherit; font-size: 17px; width: min(280px, 100%); padding: 10px 14px; text-align: center;
+    background: transparent; color: var(--fg); border: 1px solid var(--rule); border-radius: 999px; outline: none;
+  }
+  .lock input:focus { border-color: var(--muted); }
+  .lock-msg { color: var(--muted); font-size: 14px; min-height: 1.6em; margin: 10px 0 0; }
+
+  .head-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .entries .card { cursor: pointer; }
+  /* one line each, ending in "…" */
+  .entries .title, .entries .summary { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .entries .entry-row .title { flex: 1; }
+
+  /* unopened letters: soft bars where each word would be, until you open it */
+  .sealed .hide .w { color: transparent; background: var(--rule); border-radius: 3px; }
+  .opening .hide .w { transition: color 0.6s ease, background-color 0.6s ease; }
+
+  .reader {
+    /* the same embossed background as the letter page (image set by the script) */
+    position: fixed; inset: 0; z-index: 30; overflow-y: auto; background-color: var(--bg); padding-bottom: 48px;
+  }
+  .reader-bar {
+    position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center;
+    width: min(608px, calc(100vw - 32px)); margin: 0 auto; padding: 14px 0; font-size: 14px;
+  }
+  .reader-date { color: var(--fg); background: var(--bg); padding: 3px 10px; border-radius: 999px; }
+  .reader-actions { display: flex; align-items: center; gap: 14px; background: var(--bg); padding: 3px 4px 3px 14px; border-radius: 999px; }
+  .close { width: 30px; height: 30px; border: 0; border-radius: 50%; background: none; color: var(--fg); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .close:hover { background: var(--rule); }
+</style>
+
+<script>
+  import { api, cleanLetter, fmtDate, titleAndNote, type Letter } from '../lib/mailbox';
+  import { embossed } from '../lib/emboss';
+  import { fitPaper } from '../lib/paper';
+
+  // same embossed trellis background as the letter page
+  const trellis = embossed('trellis', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#faf9f6', 2.5, 'tinted');
+  document.body.style.backgroundImage = trellis;
+  document.getElementById('reader')!.style.backgroundImage = trellis;
+
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+  const KEY = 'mailbox-token';
+  const isPreview = import.meta.env.DEV && new URLSearchParams(location.search).has('preview');
+  let token = localStorage.getItem(KEY);
+  let letters: Letter[] = [];
+  let capacity = 10;
+  const list = $('list');
+
+  // ---------- lock ----------
+  const lock = $('lock'), app = $('app'), pw = $<HTMLInputElement>('pw'), lockMsg = $('lock-msg');
+  function showLock(msg = '') {
+    app.hidden = true;
+    lock.hidden = false;
+    lockMsg.textContent = msg;
+    pw.value = '';
+    pw.focus();
+  }
+  $('login').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!pw.value) return;
+    let r;
+    try { r = await api('/login', { method: 'POST', body: JSON.stringify({ password: pw.value }) }); }
+    catch { lockMsg.textContent = "Can't reach the mailbox right now."; return; }
+    if (r.ok) {
+      token = r.data.token;
+      localStorage.setItem(KEY, token!);
+      load();
+      return;
+    }
+    pw.value = '';
+    lockMsg.textContent = r.status === 429 ? 'Too many tries. Wait an hour.' : '';
+    pw.classList.remove('shake');
+    void pw.offsetWidth;
+    pw.classList.add('shake');
+  });
+  $('lock-btn').addEventListener('click', () => { localStorage.removeItem(KEY); token = null; showLock(); });
+
+  async function call(path: string, method = 'POST') {
+    const r = await api(path, { method, token });
+    if (r.status === 401) { localStorage.removeItem(KEY); token = null; showLock(); }
+    return r;
+  }
+
+  async function load() {
+    if (isPreview) return preview();
+    if (!token) return showLock();
+    let r;
+    try { r = await call('/letters', 'GET'); }
+    catch { return showLock("Can't reach the mailbox right now."); }
+    if (!r.ok) return;
+    letters = r.data.letters;
+    capacity = r.data.capacity;
+    lock.hidden = true;
+    app.hidden = false;
+    render();
+  }
+
+  // ---------- the list ----------
+  const escape = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+  const words = (s: string) => s.split(/(\s+)/).map((w) => (/\s/.test(w) || !w ? w : `<span class="w">${escape(w)}</span>`)).join('');
+
+  function updateStatus() {
+    const unopened = letters.filter((l) => !l.archived_at).length;
+    $('status').textContent = unopened
+      ? `${unopened} unopened ${unopened === 1 ? 'letter' : 'letters'} · ${unopened}/${capacity} space used`
+      : `All letters opened · 0/${capacity} space used`;
+  }
+
+  function render() {
+    updateStatus();
+    $('empty').hidden = letters.length > 0;
+    list.replaceChildren(...[...letters].sort((a, b) => b.created_at - a.created_at).map(row));
+  }
+
+  function row(l: Letter) {
+    const { title, note } = titleAndNote(l.text);
+    const sealed = !l.archived_at;
+    const li = document.createElement('li');
+    if (sealed) li.className = 'sealed';
+    li.dataset.id = l.id;
+    li.innerHTML = `<a class="card" href="#" role="button"><div class="entry-row"><span class="title"></span><span class="date"></span></div><div class="summary"></div></a>`;
+    li.querySelector('.date')!.textContent = fmtDate(l.created_at);
+    fill(li.querySelector('.title')!, title, sealed);
+    fill(li.querySelector('.summary')!, note || 'No additional text', sealed);
+    li.querySelector('a')!.addEventListener('click', (e) => { e.preventDefault(); openLetter(l.id); });
+    return li;
+  }
+
+  function fill(el: Element, text: string, sealed: boolean) {
+    if (!sealed) { el.textContent = text; return; }
+    el.innerHTML = `<span class="hide" data-text="${escape(text)}">${words(text)}</span>`;
+  }
+
+  // Opening a letter takes it out of the mailbox: it frees a space, and its row stops hiding.
+  async function reveal(id: string) {
+    const li = list.querySelector<HTMLElement>(`li[data-id="${id}"]`);
+    if (!li || !li.classList.contains('sealed')) return;
+    const hides = [...li.querySelectorAll<HTMLElement>('.hide')];
+    li.classList.add('opening');
+    li.classList.remove('sealed');
+    await new Promise((r) => setTimeout(r, 650));
+    li.classList.remove('opening');
+    hides.forEach((h) => h.replaceWith(h.dataset.text!));
+  }
+
+  // ---------- reading a letter ----------
+  const reader = $('reader');
+  let current: Letter | null = null;
+  const anim = (el: Element, frames: Keyframe[], opts: KeyframeAnimationOptions) =>
+    el.animate(frames, { easing: 'cubic-bezier(.4,0,.2,1)', ...opts }).finished;
+
+
+  async function openLetter(id: string) {
+    current = letters.find((l) => l.id === id) ?? null;
+    if (!current) return;
+    const body = $('reader-body');
+    body.replaceChildren(cleanLetter(current.html));
+    $('reader-date').textContent = fmtDate(current.created_at);
+    reader.hidden = false;
+    reader.scrollTop = 0;
+    document.documentElement.style.overflow = 'hidden';
+    // same rule as when it was written: a one-line first line is the title
+    body.classList.add('has-title');
+    const first = body.firstChild;
+    if (first && !(first instanceof HTMLElement && /^(UL|OL)$/.test(first.tagName)) && (first.textContent ?? '').trim()) {
+      const r = document.createRange();
+      r.selectNodeContents(first);
+      if (new Set([...r.getClientRects()].map((c) => Math.round(c.top))).size !== 1) body.classList.remove('has-title');
+    } else body.classList.remove('has-title');
+    fitPaper($('reader-paper'), body);
+    anim(reader, [{ opacity: 0 }, { opacity: 1 }], { duration: 200 });
+    await anim($('reader-sheet'), [{ transform: 'translateY(60px) scale(0.96)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 320 });
+    // first time it's opened: take it out of the mailbox
+    if (current && !current.archived_at) {
+      const l = current;
+      if (!isPreview) { const r = await call(`/letters/${l.id}/archive`); if (!r.ok) return; }
+      l.archived_at = Date.now();
+    }
+  }
+
+  async function closeLetter() {
+    const id = current?.id;
+    anim(reader, [{ opacity: 1 }, { opacity: 0 }], { duration: 220 });
+    await anim($('reader-sheet'), [{ transform: 'none', opacity: 1 }, { transform: 'translateY(60px) scale(0.96)', opacity: 0 }], { duration: 220 });
+    reader.hidden = true;
+    document.documentElement.style.overflow = '';
+    current = null;
+    if (id && letters.find((l) => l.id === id)?.archived_at) { await reveal(id); updateStatus(); }
+  }
+  $('close').addEventListener('click', closeLetter);
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !reader.hidden && !$<HTMLDialogElement>('confirm-delete').open) closeLetter(); });
+  reader.addEventListener('click', (e) => { if (e.target === reader) closeLetter(); });
+
+  const confirmDelete = $<HTMLDialogElement>('confirm-delete');
+  $('delete').addEventListener('click', () => confirmDelete.showModal());
+  confirmDelete.addEventListener('click', async (e) => {
+    const act = (e.target as HTMLElement).closest<HTMLElement>('[data-act]')?.dataset.act;
+    if (!act) return;
+    confirmDelete.close();
+    if (act !== 'delete' || !current) return;
+    const id = current.id;
+    if (!isPreview) { const r = await call(`/letters/${id}`, 'DELETE'); if (!r.ok) return; }
+    letters = letters.filter((l) => l.id !== id);
+    current = null;
+    reader.hidden = true;
+    document.documentElement.style.overflow = '';
+    render();
+  });
+
+  // ---------- dev-only preview with made-up letters, to compare the hiding styles ----------
+  function preview() {
+    const day = 86_400_000, now = Date.now();
+    const mk = (i: number, text: string, opened: boolean): Letter => ({
+      id: `00000000-0000-0000-0000-00000000000${i}`, text, html: text.split('\n').map((t) => `<div>${t}</div>`).join(''),
+      created_at: now - i * day * 3, archived_at: opened ? now : null,
+    });
+    letters = [
+      mk(1, 'Hi Thi! Loved the duster project\nThe way the feeder arm folds is so clever. How long did the prototype take you?', false),
+      mk(2, 'Question about your UROP\nAre you still looking for people to help with the grip force sensing? I have some experience with Fin Ray grippers.', false),
+      mk(3, 'Hello from a stranger\nJust wanted to say your site is really cute. Good luck with RMI!', false),
+      mk(4, 'A* and PID\nYour write-up helped me debug my own planner. Thank you!', true),
+    ];
+    lock.hidden = true;
+    app.hidden = false;
+    render();
+  }
+
+  load();
+</script>

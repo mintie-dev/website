@@ -1,0 +1,13 @@
+{
+  "name": "lemaithi-mailbox",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "db:local": "wrangler d1 execute lemaithi-mailbox --local --file=schema.sql",
+    "db:remote": "wrangler d1 execute lemaithi-mailbox --remote --file=schema.sql",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.168.0"
+  }
+}

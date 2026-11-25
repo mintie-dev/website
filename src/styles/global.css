@@ -115,6 +115,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 .section-head a { color: var(--muted); }
 .section-head a:hover { color: var(--fg); }
 .contacts, .contacts a { color: var(--muted); font-style: italic; }
+.contacts a { text-decoration: none; } /* no underlines: too many in a row */
 .contacts a:hover { color: var(--fg); }
 .highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
 .highlights a, .highlights .placeholder { display: block; text-decoration: none; }
@@ -141,26 +142,44 @@ figure img.narrow { width: 60%; }
 /* the script in index.astro sets the photo's height to match the text block */
 .intro { display: flex; gap: 24px; align-items: flex-start; }
 .intro img { flex: none; width: 30%; height: auto; display: block; }
+/* never wider than 38% of the row: without a cap, a tall text column makes the photo wider, which
+   squeezes the text taller, which makes the photo wider again, until the text disappears */
+.intro img { max-width: 38%; object-fit: contain; object-position: left top; }
 .intro .intro-text { flex: 1; min-width: 0; }
 .intro p:last-child { margin-bottom: 0; }
 @media (max-width: 520px) {
   .intro { flex-direction: column; }
-  .intro img { width: 60%; max-width: 240px; }
+  .intro img { width: 60%; max-width: 240px; object-position: center; }
 }
 figure .pair + .pair { margin-top: 12px; }
 
-/* lightbox for click-to-enlarge figures */
-.lightbox {
-  border: 0; padding: 0; background: transparent; max-width: 100vw; max-height: 100vh;
-  width: 100vw; height: 100vh; cursor: zoom-out;
+/* home page: a looping arrow into a paper envelope that opens /writealetter */
+.nowrap { white-space: nowrap; }
+.letter-link { position: relative; white-space: nowrap; }
+/* hangs below "here." like a little drop-down, so the photo only matches the text's height */
+.letter-drop {
+  position: absolute; left: calc(50% - 6.7px); top: calc(100% + 6px); /* the arrow's first point sits under the middle of "here" */
+  display: flex; align-items: flex-end; color: var(--muted); /* soft grey dotted line */
 }
-.lightbox[open] { display: flex; align-items: center; justify-content: center; }
-.lightbox::backdrop { background: rgba(0, 0, 0, 0.85); }
-.lightbox img { max-width: calc(100vw - 32px); max-height: calc(100vh - 32px); object-fit: contain; background: #fff; }
-.lightbox-close {
-  position: fixed; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%;
-  border: 0; background: rgba(255, 255, 255, 0.15); color: #fff; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-.lightbox-close:hover { background: rgba(255, 255, 255, 0.3); }
-html:has(.lightbox[open]) { overflow: hidden; }
+.intro:has(.letter-drop) { padding-bottom: 72px; }
+.loop-arrow { display: block; flex: none; transition: transform 0.25s ease; }
+.letter-link:hover .loop-arrow { transform: translate(2px, 1px); }
+
+.env { --tilt: 15deg; display: block; flex: none; margin: 0 0 -10px -2px; transform: rotate(var(--tilt)); transition: transform 0.25s cubic-bezier(.34, 1.6, .5, 1); }
+.env svg { display: block; width: 70px; height: auto; overflow: visible; filter: drop-shadow(0 2px 2px rgba(80, 55, 30, 0.16)) drop-shadow(0 8px 12px rgba(80, 55, 30, 0.12)); }
+.env .wiggle { transform-box: fill-box; transform-origin: 50% 60%; }
+.env .flap-shut, .env .flap-open { transform-origin: 0 0; }
+/* closing order: paper sinks, open flap folds down, shut flap comes back */
+.env .sheet { transform: translateY(0); transition: transform 0.28s ease; }
+.env .flap-open { transform: scaleY(0); transition: transform 0.2s ease-in 0.22s; }
+.env .flap-shut { transition: transform 0.2s ease-out 0.42s; }
+/* opening order: shut flap lifts, open flap rises, paper peeks */
+.env.is-open .flap-shut, .letter-link:hover .env.is-closed .flap-shut { transform: scaleY(0); transition-delay: 0s; }
+.env.is-open .flap-open, .letter-link:hover .env.is-closed .flap-open { transform: scaleY(1); transition: transform 0.22s ease-out 0.18s; }
+.env.is-open .sheet, .letter-link:hover .env.is-closed .sheet { transform: translateY(-15px); transition: transform 0.32s ease 0.36s; }
+.letter-link:hover .env.is-open .sheet { transform: translateY(-32px); transition-delay: 0s; }
+/* hop, and a little shake when there's mail */
+.letter-link:hover .env { transform: rotate(var(--tilt)) translateY(-6px) scale(1.06); }
+.letter-link:hover .env.is-open .wiggle { animation: env-shake 0.45s ease 0.05s; }
+@keyframes env-shake { 25% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } 75% { transform: rotate(-1.5deg); } }
+@media (prefers-reduced-motion: reduce) { .env, .env * { transition: none !important; animation: none !important; } }

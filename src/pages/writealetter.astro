@@ -1,0 +1,360 @@
+---
+import Base from '../layouts/Base.astro';
+import Envelope from '../components/Envelope.astro';
+import '../styles/letter.css';
+import { url } from '../lib/util';
+import { deckleMask } from '../lib/paper';
+const deckle = deckleMask(1);
+---
+<Base title="Write a letter" bare noindex>
+  <div class="desk">
+    <h1 class="page-title">Write me a letter</h1>
+    <div class="sheet" id="sheet">
+      <div class="paper-shadow">
+        <div class="paper old" id="paper" style={`--deckle: ${deckle}`}>
+          <div class="paper-top">
+            <a class="back-link" href={url('/')}>← Back</a>
+            <button class="send" id="send" type="button" disabled>
+              Send
+              <svg class="arrow-up" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 19V5" /><path d="M6 11l6-6 6 6" />
+              </svg>
+            </button>
+          </div>
+          <div class="letter-body" id="editor" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true" aria-label="Your letter"></div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="desk-foot">
+      <a href={url('/')}>back to lemaithi.com</a>
+      <button class="link" id="mailbox-btn" type="button">open</button>
+    </div>
+  </div>
+
+  <dialog class="note" id="confirm">
+    <p>Thi's mailbox can only hold 10 letters at a time. Are you sure you want to send this letter?</p>
+    <div class="actions">
+      <button class="btn" type="button" data-act="cancel">Cancel</button>
+      <button class="btn primary" type="button" data-act="send" autofocus>Send it!</button>
+    </div>
+    <p class="foot">current capacity <span id="capacity">?/10</span></p>
+  </dialog>
+
+  <dialog class="note" id="ask-open">
+    <p>Open my mailbox?</p>
+    <div class="actions">
+      <button class="btn" type="button" data-act="no">No</button>
+      <button class="btn primary" type="button" data-act="yes">Open</button>
+    </div>
+  </dialog>
+
+  <dialog class="note" id="login">
+    <form method="dialog" id="login-form">
+      <input id="pw" class="pw" type="password" placeholder="type the password" autocomplete="current-password" aria-label="Password" />
+      <p class="foot" id="login-msg"></p>
+    </form>
+  </dialog>
+
+  <dialog class="note" id="full">
+    <p>Sorry, Thi's mailbox is currently full.</p>
+    <p class="foot">She'll make room soon. Come back a bit later?</p>
+    <div class="actions">
+      <button class="btn" type="button" id="notify">
+        <svg class="bell" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></svg>
+        Notify her
+      </button>
+      <a class="btn primary" href={url('/')} style="text-decoration:none">Back to website</a>
+    </div>
+  </dialog>
+
+  <dialog class="note" id="failed">
+    <p>That didn't go through. Your letter is still here, so try again in a moment.</p>
+    <div class="actions"><button class="btn primary" type="button" data-act="ok">OK</button></div>
+  </dialog>
+
+  <!-- after sending: the homepage envelope, big, swallows the page and closes, then fades away -->
+  <div class="send-scene" id="scene" hidden>
+    <div class="scene-env" id="scene-env"><Envelope /></div>
+    <p class="scene-msg" id="scene-msg" hidden>Thanks for sending!<br /><a href={url('/')}>back to lemaithi.com</a></p>
+  </div>
+</Base>
+
+<style>
+  .desk { padding: 24px 0 40px; }
+  .sheet { position: relative; }
+
+  .paper.old { cursor: text; }
+  /* same as the Projects and Notes page titles */
+  .page-title { width: min(608px, calc(100vw - 32px)); margin: 8px auto 20px; }
+
+  /* back and send sit on the paper, along its top */
+  .paper-top { position: absolute; z-index: 2; top: 18px; left: 18px; right: 18px; display: flex; justify-content: space-between; align-items: center; }
+  /* same as "← Projects" at the top of a project page */
+  .back-link { font-size: 14px; color: #8a7f72; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  .back-link:hover { color: #2f2a25; }
+  /* send: grey until there's something written, then black */
+  .send {
+    display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; cursor: pointer;
+    font: inherit; font-size: 15px; color: #2f2a25; transition: color 0.2s;
+  }
+  .send:disabled { color: #b9b0a4; cursor: default; }
+  .arrow-up { transition: transform 0.2s ease; }
+  .send:not(:disabled):hover .arrow-up { transform: translateY(-2px); }
+
+  .desk-foot { width: min(608px, calc(100vw - 32px)); margin: 22px auto 0; display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+  .desk-foot a, .desk-foot .link { color: inherit; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  .desk-foot a:hover, .desk-foot .link:hover { color: var(--fg); }
+  .pw {
+    font: inherit; font-size: 16px; width: 100%; padding: 9px 14px; text-align: center; margin-bottom: 8px;
+    background: transparent; color: var(--fg); border: 1px solid var(--rule); border-radius: 999px; outline: none;
+  }
+  .pw:focus { border-color: var(--muted); }
+
+  #notify .bell { transform-origin: 50% 10%; }
+  #notify.ringing .bell { animation: ring 0.9s ease; }
+  @keyframes ring { 10%, 30%, 50%, 70% { transform: rotate(18deg); } 20%, 40%, 60%, 80% { transform: rotate(-18deg); } }
+  #notify { display: inline-flex; align-items: center; gap: 7px; }
+
+  /* send scene */
+  .send-scene {
+    position: fixed; inset: 0; z-index: 30; background: var(--bg); background-image: inherit;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+  }
+  .scene-env :global(.env) { --tilt: 0deg; margin: 0; }
+  .scene-env :global(.env svg) { width: min(300px, 70vw); }
+  .scene-msg { text-align: center; color: var(--muted); margin: 0; font-size: 15px; }
+  .scene-msg a { color: var(--fg); }
+</style>
+
+<script>
+  import { getStatus, api, cleanLetterHTML } from '../lib/mailbox';
+  import { embossed } from '../lib/emboss';
+  import { fitPaper } from '../lib/paper';
+
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+  const ed = $<HTMLDivElement>('editor');
+  const paper = $('paper');
+  const sendBtn = $<HTMLButtonElement>('send');
+  const KEY = 'mailbox-token';
+
+  // embossed trellis in the background, tinted, in the page's own colour
+  const base = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#faf9f6';
+  document.body.style.backgroundImage = embossed('trellis', base, 2.5, 'tinted');
+
+  // clicking anywhere on the sheet puts the caret in the letter
+  paper.addEventListener('mousedown', (e) => {
+    if (e.target !== paper) return;
+    e.preventDefault();
+    ed.focus();
+    const r = document.createRange();
+    r.selectNodeContents(ed);
+    r.collapse(false);
+    getSelection()!.removeAllRanges();
+    getSelection()!.addRange(r);
+  });
+
+  document.execCommand('defaultParagraphSeparator', false, 'div');
+  ed.focus();
+
+  // when the page opens, the paper rises up a little into place
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    $('sheet').animate(
+      [{ transform: 'translateY(70px)', opacity: 0 }, { transform: 'none', opacity: 1 }],
+      { duration: 550, easing: 'cubic-bezier(.2,.7,.2,1)' },
+    );
+  }
+
+  // ---------- pages: when the last page fills up, another one is added ----------
+  const fit = () => fitPaper(paper, ed);
+  new ResizeObserver(fit).observe(paper);
+
+  // ---------- the first line is a title, like Notes, unless it runs on past one line ----------
+  function updateTitle() {
+    const first = ed.firstChild;
+    const r = document.createRange();
+    let isTitle = false;
+    if (first && !(first instanceof HTMLElement && /^(UL|OL)$/.test(first.tagName)) && (first.textContent ?? '').trim()) {
+      ed.classList.add('has-title'); // measure with the title style on, so the answer doesn't flip-flop
+      r.selectNodeContents(first);
+      const tops = new Set([...r.getClientRects()].map((c) => Math.round(c.top)));
+      isTitle = tops.size === 1;
+    }
+    ed.classList.toggle('has-title', isTitle);
+  }
+
+  // ---------- lists from "- " and "1. " ----------
+  function currentLine(): Node | null {
+    const sel = getSelection()!;
+    let top: Node | null = sel.rangeCount ? sel.getRangeAt(0).endContainer : null;
+    while (top && top !== ed && top.parentNode !== ed) top = top.parentNode;
+    return top;
+  }
+  function newList(kind: 'ul' | 'ol', replace: Node) {
+    const sel = getSelection()!;
+    const list = document.createElement(kind);
+    const li = document.createElement('li');
+    li.appendChild(document.createElement('br'));
+    list.appendChild(li);
+    replace.parentNode!.replaceChild(list, replace);
+    const r = document.createRange();
+    r.setStart(li, 0);
+    r.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(r);
+  }
+  // Typing "- " (or "* ") or "1. " at the start of a line turns it into a list.
+  function autoList() {
+    const line = currentLine();
+    if (!line || line === ed || (line as Element).tagName === 'UL' || (line as Element).tagName === 'OL') return;
+    const text = (line.textContent ?? '').replace(/ /g, ' ');
+    const m = text.match(/^([-*]|1[.)]) /);
+    if (!m) return;
+    newList(m[1] === '-' || m[1] === '*' ? 'ul' : 'ol', line);
+    const rest = text.slice(m[0].length);
+    if (rest) document.execCommand('insertText', false, rest);
+  }
+
+  ed.addEventListener('input', (e) => {
+    const ie = e as InputEvent;
+    if (ie.inputType === 'insertText' && ie.data?.includes(' ')) autoList();
+    updateTitle();
+    fit();
+  });
+  // paste as plain text; no formatting on this page
+  ed.addEventListener('paste', (e) => {
+    e.preventDefault();
+    document.execCommand('insertText', false, e.clipboardData?.getData('text/plain') ?? '');
+  });
+  // no bold / italic / underline: one style only
+  ed.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && /^[biu]$/i.test(e.key)) e.preventDefault();
+  });
+
+  const letterText = () => ed.innerText.replace(/\n{3,}/g, '\n\n').trim();
+  let sent = false;
+  addEventListener('beforeunload', (e) => { if (!sent && letterText()) e.preventDefault(); });
+
+  // ---------- Thi's mailbox: the "open" link, or the "open" trick ----------
+  const login = $<HTMLDialogElement>('login');
+  const pw = $<HTMLInputElement>('pw');
+  const goToMailbox = () => { sent = true; location.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/openmymailbox`; };
+  function openMailbox() {
+    if (localStorage.getItem(KEY)) return goToMailbox();
+    $('login-msg').textContent = '';
+    pw.value = '';
+    login.showModal();
+    pw.focus();
+  }
+  $('mailbox-btn').addEventListener('click', openMailbox);
+  login.addEventListener('click', (e) => { if (e.target === login) login.close(); });
+  $('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!pw.value) return;
+    let r;
+    try { r = await api('/login', { method: 'POST', body: JSON.stringify({ password: pw.value }) }); }
+    catch { $('login-msg').textContent = "Can't reach the mailbox right now."; return; }
+    if (r.ok) { localStorage.setItem(KEY, r.data.token); goToMailbox(); return; }
+    pw.value = '';
+    $('login-msg').textContent = r.status === 429 ? 'Too many tries. Wait an hour.' : '';
+    pw.classList.remove('shake');
+    void pw.offsetWidth;
+    pw.classList.add('shake');
+  });
+
+  // ---------- dialogs ----------
+  const confirmDlg = $<HTMLDialogElement>('confirm');
+  const askOpen = $<HTMLDialogElement>('ask-open');
+  const full = $<HTMLDialogElement>('full');
+  const failed = $<HTMLDialogElement>('failed');
+  full.addEventListener('cancel', (e) => e.preventDefault()); // can't wave it away: the mailbox is full
+  failed.querySelector('[data-act="ok"]')!.addEventListener('click', () => failed.close());
+  askOpen.addEventListener('click', (e) => {
+    const act = (e.target as HTMLElement).closest<HTMLElement>('[data-act]')?.dataset.act;
+    if (act) askOpen.close();
+    if (act === 'yes') openMailbox();
+  });
+  const notify = $('notify');
+  notify.addEventListener('click', () => {
+    // It doesn't actually tell her anything. It just rings.
+    notify.classList.remove('ringing');
+    full.classList.remove('shake');
+    void notify.offsetWidth;
+    notify.classList.add('ringing');
+    full.classList.add('shake');
+  });
+
+  let count = 0, capacity = 10;
+  getStatus().then((s) => {
+    if (!s) return;
+    ({ count, capacity } = s);
+    if (count >= capacity) full.showModal();
+  });
+
+  const syncSend = () => { sendBtn.disabled = !letterText(); };
+  ed.addEventListener('input', syncSend);
+
+  sendBtn.addEventListener('click', async () => {
+    if (!letterText()) return;
+    const s = await getStatus();
+    if (s) ({ count, capacity } = s);
+    if (s && count >= capacity) { full.showModal(); return; }
+    $('capacity').textContent = s ? `${count}/${capacity}` : `?/${capacity}`;
+    confirmDlg.showModal();
+  });
+  confirmDlg.addEventListener('click', (e) => {
+    const act = (e.target as HTMLElement).closest<HTMLElement>('[data-act]')?.dataset.act;
+    if (act === 'cancel') {
+      confirmDlg.close();
+      // the secret way in: a letter that just says "open", then Cancel
+      if (letterText().toLowerCase() === 'open') askOpen.showModal();
+    }
+    if (act === 'send') {
+      confirmDlg.close();
+      send();
+    }
+  });
+
+  // ---------- sending ----------
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  async function send() {
+    const text = letterText();
+    const html = cleanLetterHTML(ed.innerHTML);
+    const request = api('/letters', { method: 'POST', body: JSON.stringify({ html, text }) }).catch(() => null);
+
+    // the homepage envelope, big and centred, open with a page sticking out
+    const scene = $('scene'), envWrap = $('scene-env');
+    const env = envWrap.querySelector<HTMLElement>('.env')!;
+    env.classList.replace('is-closed', 'is-open');
+    scene.hidden = false;
+    await scene.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, fill: 'forwards' }).finished;
+    await wait(450);
+
+    const res = await request;
+    if (!res || !res.ok) {
+      scene.hidden = true;
+      env.classList.replace('is-open', 'is-closed');
+      if (res?.status === 409) { count = capacity; full.showModal(); }
+      else failed.showModal();
+      return;
+    }
+    sent = true;
+
+    // the reverse of the homepage hover: the page sinks back in, the flap folds down
+    env.classList.replace('is-open', 'is-closed');
+    await wait(800);
+    // and away it goes
+    await envWrap.animate(
+      [{ opacity: 1, transform: 'none', filter: 'blur(0)' }, { opacity: 0, transform: 'translateY(-16px) scale(0.92)', filter: 'blur(2px)' }],
+      { duration: 650, easing: 'ease-in', fill: 'forwards' },
+    ).finished;
+    envWrap.style.display = 'none';
+    const msg = $('scene-msg');
+    msg.hidden = false;
+    msg.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 400, fill: 'forwards' });
+  }
+
+</script>
